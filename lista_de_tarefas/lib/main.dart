@@ -9,7 +9,6 @@ void main() {
   runApp(MaterialApp(
     home: Home(),
   ));
-
 }
 
 class Home extends StatefulWidget {
@@ -18,18 +17,31 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   final _toDoController = TextEditingController();
 
   List _toDoList = [];
 
-  void _addToDo(){
+
+  @override
+  void initState() {
+    super.initState();
+
+    _readData().then((data) {
+      setState(() {
+        _toDoList = json.decode(data);
+      });
+      
+    });
+  }
+
+  void _addToDo() {
     setState(() {
       Map<String, dynamic> newToDo = Map();
       newToDo["title"] = _toDoController.text;
       _toDoController.text = "";
       newToDo["ok"] = false;
       _toDoList.add((newToDo));
+      _saveData();
     });
   }
 
@@ -49,16 +61,16 @@ class _HomeState extends State<Home> {
               children: <Widget>[
                 Expanded(
                     child: TextField(
-                      controller: _toDoController,
-                      decoration: InputDecoration(
-                        labelText: "Nova Tarefa",
-                        labelStyle: TextStyle(color: Colors.blueAccent),
-                      ),
-                    )
-                ),
+                  controller: _toDoController,
+                  decoration: InputDecoration(
+                    labelText: "Nova Tarefa",
+                    labelStyle: TextStyle(color: Colors.blueAccent),
+                  ),
+                )),
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith((states) =>  Colors.blueAccent)),
+                      backgroundColor: MaterialStateProperty.resolveWith(
+                          (states) => Colors.blueAccent)),
                   child: Text("ADD"),
                   onPressed: _addToDo,
                 ),
@@ -66,19 +78,21 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(top:10.0),
+            child: ListView.builder(
+                padding: EdgeInsets.only(top: 10.0),
                 itemCount: _toDoList.length,
                 itemBuilder: (context, index) {
                   return CheckboxListTile(
                     title: Text(_toDoList[index]["title"]),
                     value: _toDoList[index]["ok"],
                     secondary: CircleAvatar(
-                      child: Icon(_toDoList[index]["ok"] ?
-                          Icons.check : Icons.error),),
-                    onChanged: (c){
+                      child: Icon(
+                          _toDoList[index]["ok"] ? Icons.check : Icons.error),
+                    ),
+                    onChanged: (c) {
                       setState(() {
                         _toDoList[index]["ok"] = c;
+                        _saveData();
                       });
                     },
                   );
@@ -110,8 +124,3 @@ class _HomeState extends State<Home> {
     }
   }
 }
-
-
-
-
-
