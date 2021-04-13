@@ -23,7 +23,39 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Lista de Tarefas"),
+        backgroundColor: Colors.blueAccent,
+        centerTitle: true,
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: "Nova Tarefa",
+                        labelStyle: TextStyle(color: Colors.blueAccent),
+                      ),
+                    ),
+                ),
+                TextButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.blueAccent),
+                  ),
+                  onPressed: () { },
+                  child: Text("ADD"),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Future<File> _getFile() async {
@@ -38,14 +70,14 @@ class _HomeState extends State<Home> {
   }
 
   Future<String> _readData() async {
-    try{
+    try {
       final file = await _getFile();
 
       return file.readAsString();
-  } catch (e){
-    return null;
+    } catch (e) {
+      return null;
+    }
   }
-
 }
 
 
